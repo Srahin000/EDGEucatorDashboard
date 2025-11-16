@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remove User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #dc2626;
+        }
+        .success {
+            color: green;
+            margin-top: 20px;
+            padding: 10px;
+            background: #d1fae5;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+            margin-top: 20px;
+            padding: 10px;
+            background: #fee2e2;
+            border-radius: 5px;
+        }
+        .user-list {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 5px;
+        }
+        .user-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Remove User from Dashboard</h1>
+    
+    <div class="user-list">
+        <h3>Current Users:</h3>
+        <div id="userList"></div>
+    </div>
+
+    <div>
+        <label>Email to remove:</label>
+        <input type="email" id="emailInput" placeholder="user@example.com">
+        <button onclick="removeUser()">Remove User</button>
+        <button onclick="removeAllUsers()" style="background: #dc2626;">Remove All Users</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('mockUsers') || '[]');
+            const userListDiv = document.getElementById('userList');
+            
+            if (users.length === 0) {
+                userListDiv.innerHTML = '<p>No users found.</p>';
+                return;
+            }
+
+            userListDiv.innerHTML = users.map(user => `
+                <div class="user-item">
+                    <div>
+                        <strong>${user.name}</strong> (${user.email})
+                    </div>
+                    <button onclick="removeUserByEmail('${user.email}')" style="background: #ef4444; padding: 5px 10px; font-size: 12px;">
+                        Remove
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeUser() {
+            const email = document.getElementById('emailInput').value.trim().toLowerCase();
+            if (!email) {
+                showResult('Please enter an email address', 'error');
+                return;
+            }
+
+            removeUserByEmail(email);
+        }
+
+        function removeUserByEmail(email) {
+            try {
+                const users = JSON.parse(localStorage.getItem('mockUsers') || '[]');
+                const children = JSON.parse(localStorage.getItem('mockChildren') || '[]');
+                
+                // Find user
+                const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+                if (userIndex === -1) {
+                    showResult('User not found', 'error');
+                    return;
+                }
+
+                const user = users[userIndex];
+                
+                // Remove user
+                users.splice(userIndex, 1);
+                localStorage.setItem('mockUsers', JSON.stringify(users));
+
+                // Remove user's children
+                if (user.children && user.children.length > 0) {
+                    const updatedChildren = children.filter(child => !user.children.includes(child.id));
+                    localStorage.setItem('mockChildren', JSON.stringify(updatedChildren));
+                    
+                    // Remove child data schemas
+                    const childData = JSON.parse(localStorage.getItem('childDataSchemas') || '{"children":{}}');
+                    user.children.forEach(childId => {
+                        delete childData.children[childId];
+                    });
+                    localStorage.setItem('childDataSchemas', JSON.stringify(childData));
+                }
+
+                // Clear session if this is the current user
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    const current = JSON.parse(currentUser);
+                    if (current.email.toLowerCase() === email.toLowerCase()) {
+                        localStorage.removeItem('sessionId');
+                        localStorage.removeItem('currentUser');
+                    }
+                }
+
+                showResult(`User "${user.name}" (${user.email}) has been removed successfully!`, 'success');
+                document.getElementById('emailInput').value = '';
+                loadUsers();
+            } catch (error) {
+                showResult('Error: ' + error.message, 'error');
+            }
+        }
+
+        function removeAllUsers() {
+            if (!confirm('Are you sure you want to remove ALL users? This cannot be undone.')) {
+                return;
+            }
+
+            localStorage.removeItem('mockUsers');
+            localStorage.removeItem('mockChildren');
+            localStorage.removeItem('childDataSchemas');
+            localStorage.removeItem('sessionId');
+            localStorage.removeItem('currentUser');
+
+            showResult('All users have been removed!', 'success');
+            loadUsers();
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = type;
+            resultDiv.innerHTML = '<strong>' + message + '</strong>';
+        }
+
+        // Load users on page load
+        loadUsers();
+    </script>
+</body>
+</html>
+
+

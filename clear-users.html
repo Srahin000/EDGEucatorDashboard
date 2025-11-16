@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear User Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #dc2626;
+        }
+        .success {
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+        .info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+    <div class="container">
+        <h1>Clear User Data</h1>
+        <p>This will remove all user data including:</p>
+        <ul>
+            <li>User accounts (including "mahdi instam")</li>
+            <li>Children profiles</li>
+            <li>Session data</li>
+            <li>Child conversation data</li>
+            <li>Parent goals</li>
+        </ul>
+        
+        <button onclick="clearAllData()">Clear All Data & Reset</button>
+        
+        <div class="success" id="success">
+            ✓ All data cleared! Redirecting to signup...
+        </div>
+        
+        <div class="info" id="info"></div>
+    </div>
+
+    <script>
+        function clearAllData() {
+            // FORCE CLEAR ALL localStorage - don't check, just clear everything
+            const itemsToClear = [
+                'mockUsers',
+                'mockChildren',
+                'sessionId',
+                'currentUser',
+                'childDataSchemas',
+                'parentGoals',
+                'parents',
+                'profiles',
+                'sessions'
+            ];
+
+            // Clear all specified items
+            itemsToClear.forEach(item => {
+                try {
+                    localStorage.removeItem(item);
+                } catch (e) {
+                    console.error('Error clearing', item, e);
+                }
+            });
+
+            // Also clear ALL localStorage (nuclear option)
+            try {
+                localStorage.clear();
+            } catch (e) {
+                console.error('Error clearing all localStorage', e);
+            }
+
+            // Clear sessionStorage too
+            try {
+                sessionStorage.clear();
+            } catch (e) {
+                console.error('Error clearing sessionStorage', e);
+            }
+
+            // Show success message
+            const successDiv = document.getElementById('success');
+            const infoDiv = document.getElementById('info');
+            
+            successDiv.style.display = 'block';
+            infoDiv.innerHTML = `✓ Cleared all localStorage data including: ${itemsToClear.join(', ')}<br>✓ Cleared all sessionStorage<br>✓ All user data removed (including "mahdi islam")`;
+
+            // Force redirect to signup - use replace to prevent back button
+            setTimeout(() => {
+                // Clear any remaining data one more time
+                localStorage.clear();
+                sessionStorage.clear();
+                // Use replace instead of href to prevent going back
+                window.location.replace('/signup');
+            }, 1500);
+        }
+
+        // Show current data on load
+        window.onload = function() {
+            const infoDiv = document.getElementById('info');
+            const items = ['mockUsers', 'mockChildren', 'sessionId', 'currentUser'];
+            const found = items.filter(item => {
+                try {
+                    return localStorage.getItem(item) !== null;
+                } catch (e) {
+                    return false;
+                }
+            });
+            
+            // Also check what users exist
+            let userInfo = '';
+            try {
+                const mockUsers = localStorage.getItem('mockUsers');
+                if (mockUsers) {
+                    const users = JSON.parse(mockUsers);
+                    if (users.length > 0) {
+                        userInfo = `<br><strong>Current users:</strong> ${users.map(u => u.name + ' (' + u.email + ')').join(', ')}`;
+                    }
+                }
+            } catch (e) {
+                // Ignore
+            }
+            
+            if (found.length > 0) {
+                infoDiv.innerHTML = `Current data found: ${found.join(', ')}${userInfo}`;
+            } else {
+                infoDiv.innerHTML = 'No user data found. You can proceed to signup.';
+                infoDiv.style.background = '#d1fae5';
+            }
+        };
+    </script>
+</body>
+</html>

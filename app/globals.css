@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0D2818;
+  --foreground: #FFFFFF;
+  --blackboard-dark: #0D2818;
+  --chalk-white: #FFFFFF;
+  --chalk-yellow: #FFF9C4;
+  --chalk-green: #C5E1A5;
+  --chalk-pink: #F8BBD0;
+  --lightgreen: #B8E6D1;
+  --lightgreen-light: #C5EBD9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0D2818;
+    --foreground: #FFFFFF;
+  }
+}
+
+:root {
+  --font-poppins: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-handwriting: 'Kalam', cursive;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-handwriting), var(--font-poppins), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+}
+
+/* Apply handwriting font to all text elements */
+p, span, div, h1, h2, h3, h4, h5, h6, label, button, a, li, td, th {
+  font-family: var(--font-handwriting), var(--font-poppins), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Light green background utility */
+.bg-lightgreen {
+  background-color: var(--lightgreen) !important;
+}
+
+.bg-lightgreen-light {
+  background-color: var(--lightgreen-light) !important;
+}
+
+/* Pastel card backgrounds */
+.bg-pastel-blue {
+  background-color: #E3F2FD !important; /* Light blue pastel */
+}
+
+.bg-pastel-purple {
+  background-color: #F3E5F5 !important; /* Light purple pastel */
+}
+
+.bg-pastel-green {
+  background-color: #E8F5E9 !important; /* Light green pastel */
+}
+
+.bg-pastel-yellow {
+  background-color: #FFF9C4 !important; /* Light yellow pastel */
+}
+
+.bg-pastel-pink {
+  background-color: #FCE4EC !important; /* Light pink pastel */
+}
+
+.bg-pastel-orange {
+  background-color: #FFF3E0 !important; /* Light orange pastel */
+}
+
+.bg-pastel-mint {
+  background-color: #E0F2F1 !important; /* Light mint pastel */
+}
+
+.bg-pastel-lavender {
+  background-color: #EDE7F6 !important; /* Light lavender pastel */
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(13, 40, 24, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #0D2818, #1B5E20);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #1B5E20, #0D2818);
+}
+
+/* Chalk texture animation */
+@keyframes chalk-draw {
+  0% {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chalk-animate {
+  animation: chalk-draw 0.1s ease-out;
+}
+
+/* Chalk text shadow effect */
+.chalk-text {
+  text-shadow: 
+    0 0 4px rgba(255, 255, 255, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chalk-text-yellow {
+  text-shadow: 
+    0 0 4px rgba(255, 249, 196, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chalk-text-green {
+  text-shadow: 
+    0 0 4px rgba(197, 225, 165, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chalk-text-pink {
+  text-shadow: 
+    0 0 4px rgba(248, 187, 208, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
